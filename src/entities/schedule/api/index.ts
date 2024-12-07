@@ -2,7 +2,7 @@ import { api } from '@/shared';
 import { ISchedule, ISchedulePatch, ISchedulePost } from '../model/types';
 import { IResponse } from '@/shared/types/Types';
 
-export const ScheduleAPI = api.injectEndpoints({
+export const scheduleApi = api.injectEndpoints({
     endpoints: (builder) => ({
         getAllSchedules: builder.query<ISchedule[], void>({
             query: () => ({
@@ -42,4 +42,4 @@ export const {
     useGetAllSchedulesQuery,
     useDeleteScheduleMutation,
     useUpdateScheduleMutation,
-} = ScheduleAPI;
+} = scheduleApi;

@@ -9,7 +9,7 @@ const AdminEmployeePageHead = () => {
     const { isCreatingEmployee, isUpdatingEmployee } = useAppSelector();
     const { setIsCreatingEmployee, setAttendanceBranch } = useAppActions();
     const { data: branches, isSuccess: branchesSuccess } =
-        useGetAllBranchesQuery({});
+        useGetAllBranchesQuery();
     const [branchOptions, setBranchOptions] = useState<SelectProps['options']>(
         [],
     );
@@ -18,7 +18,7 @@ const AdminEmployeePageHead = () => {
     useEffect(() => {
         if (branchesSuccess) {
             setBranchOptions(
-                branches?.data?.map((branch) => ({
+                branches?.map((branch) => ({
                     label: branch.name,
                     value: branch.id,
                 })),
@@ -32,7 +32,7 @@ const AdminEmployeePageHead = () => {
 
     return (
         <div className="flex justify-between items-center">
-            <h2 className='header_title'>
+            <h2 className="header_title">
                 <FaArrowLeft
                     size={15}
                     className="mr-4 cursor-pointer hover:text-blue-300 duration-150"

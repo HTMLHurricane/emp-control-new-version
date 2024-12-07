@@ -2,7 +2,7 @@ import { api } from '@/shared';
 import { IOrganizationPost } from '../model/types';
 import { IdName, IResponse } from '@/shared/types/Types';
 
-const organiztionApi = api.injectEndpoints({
+export const organizationApi = api.injectEndpoints({
     endpoints: (builder) => ({
         createOrganization: builder.mutation<
             IResponse['message'],
@@ -53,4 +53,4 @@ export const {
     useGetOrganizationByIdQuery,
     useGetOrganizationQuery,
     useUpdateOrganizationMutation,
-} = organiztionApi;
+} = organizationApi;

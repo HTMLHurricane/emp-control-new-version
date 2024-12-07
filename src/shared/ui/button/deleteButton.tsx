@@ -18,7 +18,7 @@ const DeleteButton: FC<Props> = ({ onConfirm }) => {
                 className="text-[12px] md:text-[14px]"
                 danger
             >
-                <div className="hidden xl:block">Удалить</div>
+                {/* <div className="hidden xl:block">Удалить</div> */}
             </Button>
         </Popconfirm>
     );

@@ -1,5 +1,5 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
-import { IEmployeeForm, IEmployeeSliceState } from '../types'
+import { IEmployeePatch, IEmployeeSliceState } from '../types'
 
 const initialState: IEmployeeSliceState = {
   isCreatingEmployee: false,
@@ -19,7 +19,7 @@ const EmployeeSlice = createSlice({
     setIsUpdatingEmployee(state, { payload }: PayloadAction<boolean>) {
       state.isUpdatingEmployee = payload
     },
-    setEmployeeForm(state, { payload }: PayloadAction<IEmployeeForm>) {
+    setEmployeeForm(state, { payload }: PayloadAction<IEmployeePatch>) {
       state.employeeForm = payload
     },
     setEmployeeTablePage(state, { payload }: PayloadAction<number>) {

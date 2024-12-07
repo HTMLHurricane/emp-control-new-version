@@ -8,7 +8,7 @@ import {
 } from '../model/types';
 import { IResponse } from '@/shared/types/Types';
 
-export const BranchAPI = api.injectEndpoints({
+export const branchApi = api.injectEndpoints({
     endpoints: (builder) => ({
         getAllBranches: builder.query<IBranch[], void>({
             query: () => ({
@@ -63,4 +63,4 @@ export const {
     useDeleteBranchMutation,
     useUpdateBranchMutation,
     useGetBranchesInfoQuery,
-} = BranchAPI;
+} = branchApi;

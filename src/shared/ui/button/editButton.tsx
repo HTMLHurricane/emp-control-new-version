@@ -14,7 +14,7 @@ const EditButton: FC<Props> = ({ onClick }) => {
             type="primary"
             icon={<BsPencil />}
         >
-            <div className="hidden xl:block">Редактировать</div>
+            {/* <div className="hidden xl:block">Редактировать</div> */}
         </Button>
     );
 };

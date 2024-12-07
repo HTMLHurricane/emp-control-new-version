@@ -1,17 +1,25 @@
-import { FC, useEffect } from 'react';
-import { Form, Input, Button, message } from 'antd';
+import { FC, useEffect, useMemo } from 'react';
+import { Form, Input, Button, message, Select } from 'antd';
 import { useCreateScheduleMutation } from '@/entities/schedule/api';
 import { FlexBox, useAppActions } from '@/shared';
 import {
     ISchedulePost,
     IScheduleDayPost,
 } from '@/entities/schedule/model/types';
+import { useGetOrganizationQuery } from '@/entities/organization/api';
+import { mapToOptions } from '@/shared/lib/mapToOptions';
 
 const AdminCreateScheduleForm: FC = () => {
     const [form] = Form.useForm<ISchedulePost>();
     const [createSchedule, { isSuccess, isLoading, isError }] =
         useCreateScheduleMutation();
     const { setIsCreatingSchedule } = useAppActions();
+    const { data: organizations } = useGetOrganizationQuery();
+
+    const organizationOptions = useMemo(
+        () => mapToOptions(organizations),
+        [organizations],
+    );
 
     const generateDayData = (
         day:
@@ -115,6 +123,19 @@ const AdminCreateScheduleForm: FC = () => {
                 ]}
             >
                 <Input />
+            </Form.Item>
+            <Form.Item
+                name="organization_id"
+                label="Организация"
+                rules={[
+                    { required: true, message: 'Пожалуйста, заполните поле!' },
+                ]}
+                className="max-w-[600px]"
+            >
+                <Select
+                    disabled={!organizationOptions?.length}
+                    options={organizationOptions}
+                />
             </Form.Item>
             <FlexBox cls="max-w-[600px] mb-5">
                 <b>День недели</b>

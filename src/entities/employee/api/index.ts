@@ -1,56 +1,65 @@
-import { api } from '@/shared'
-import { IData } from '@/shared/types/Types'
+import { api } from '@/shared';
 import {
-  IEmployee,
-  IEmployeeForm,
-  IEmployeeFormData,
-  IEmployeeParams,
-} from '../model/types'
+    IEmployee,
+    IEmployeeImage,
+    IEmployeeImagePost,
+    IEmployeeParams,
+    IEmployeePatch,
+    IEmployeePost,
+    IEmployeeResponse,
+} from '../model/types';
+import { IResponse } from '@/shared/types/Types';
 
 export const EmployeeAPI = api.injectEndpoints({
-  endpoints: (builder) => ({
-    getAllEmployees: builder.query<IData<IEmployee[]>, IEmployeeParams>({
-      query: (params) => ({
-        url: 'users/control',
-        params,
-      }),
-      providesTags: ['employee'],
+    endpoints: (builder) => ({
+        getAllEmployees: builder.query<IEmployee[], IEmployeeParams>({
+            query: (params) => ({
+                url: 'employees/get_employee_by_branch',
+                params,
+            }),
+            providesTags: ['employee'],
+        }),
+        createEmployee: builder.mutation<IEmployeeResponse, IEmployeePost>({
+            query: (body) => ({
+                url: 'employees',
+                method: 'POST',
+                body,
+            }),
+            invalidatesTags: ['employee'],
+        }),
+        setEmployeeImage: builder.mutation<IEmployeeImage, IEmployeeImagePost>({
+            query: ({ id, image }) => {
+                const formData = new FormData();
+                formData.append('image', image);
+                return {
+                    url: `employees/add_image?employee_id=${id}`,
+                    method: 'POST',
+                };
+            },
+            invalidatesTags: ['employee'],
+        }),
+        updateEmployee: builder.mutation<IResponse['message'], IEmployeePatch>({
+            query: ({ id, ...body }) => ({
+                url: `employees/update?employee_id=${id}`,
+                method: 'PUT',
+                body,
+            }),
+            invalidatesTags: ['employee'],
+        }),
+        deleteEmployee: builder.mutation<IResponse['message'], number>({
+            query: (id) => ({
+                url: `employees/${id}`,
+                method: 'DELETE',
+            }),
+            invalidatesTags: ['employee'],
+        }),
     }),
-    createEmployee: builder.mutation<any, IEmployeeForm>({
-      query: ({ schedule, ...rest }) => ({
-        url: 'user/add',
-        method: 'POST',
-        body: { schedule_id: schedule, ...rest },
-      }),
-      invalidatesTags: ['employee'],
-    }),
-    updateEmployee: builder.mutation<any, IEmployeeFormData>({
-      query: ({ id, ...rest }) => ({
-        url: `user/update/${id}`,
-        method: 'PUT',
-        body: {
-          schedule_id: rest.schedule,
-          name: rest.name,
-          phone: rest.phone,
-          position_id: rest.position_id,
-          branch_id: rest.branch_id,
-        },
-      }),
-      invalidatesTags: ['employee'],
-    }),
-    deleteEmployee: builder.mutation<any, number>({
-      query: (id) => ({
-        url: `user/delete/${id}`,
-        method: 'DELETE',
-      }),
-      invalidatesTags: ['employee'],
-    }),
-  }),
-})
+});
 
 export const {
-  useGetAllEmployeesQuery,
-  useCreateEmployeeMutation,
-  useDeleteEmployeeMutation,
-  useUpdateEmployeeMutation,
-} = EmployeeAPI
+    useGetAllEmployeesQuery,
+    useCreateEmployeeMutation,
+    useDeleteEmployeeMutation,
+    useUpdateEmployeeMutation,
+    useSetEmployeeImageMutation,
+} = EmployeeAPI;

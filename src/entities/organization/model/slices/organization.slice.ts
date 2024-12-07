@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IOrganizationSliceState } from '../types';
-import { IdName } from '@/shared/types/Types'
+import { IdName } from '@/shared/types/Types';
 
 const initialState: IOrganizationSliceState = {
     isCreatingOrganization: false,
@@ -18,10 +18,7 @@ const organizationSlice = createSlice({
         setIsUpdatingOrganization(state, { payload }: PayloadAction<boolean>) {
             state.isUpdatingOrganization = payload;
         },
-        setOrganizationForm(
-            state,
-            { payload }: PayloadAction<IdName>,
-        ) {
+        setOrganizationForm(state, { payload }: PayloadAction<IdName>) {
             state.organizationForm = payload;
         },
     },

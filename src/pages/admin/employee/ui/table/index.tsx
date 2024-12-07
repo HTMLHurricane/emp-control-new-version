@@ -17,31 +17,25 @@ import { FaEye } from 'react-icons/fa6';
 import { columnResponseText } from '@/shared/const/css';
 
 const AdminEmployeePageTable = () => {
-    const { attendanceBranch, employeeTablePage, employeeTableLimit } =
-        useAppSelector();
-    const {
-        setEmployeeForm,
-        setIsUpdatingEmployee,
-        setEmployeeTableLimit,
-        setEmployeeTablePage,
-    } = useAppActions();
+    const { attendanceBranch } = useAppSelector();
+    const { setEmployeeForm, setIsUpdatingEmployee } = useAppActions();
     const navigate = useNavigate();
     const { data, isFetching } = useGetAllEmployeesQuery({
-        page: employeeTablePage,
-        per_page: employeeTableLimit,
-        id: attendanceBranch,
+        branch_id: attendanceBranch,
     });
     const [deleteBranch, { isSuccess: deleteSuccess }] =
         useDeleteEmployeeMutation();
 
     const handleEdit = (rec: IEmployee) => {
         setEmployeeForm({
-            branch_id: rec.branch.id,
-            name: rec.name,
-            phone: rec?.phone,
-            position_id: rec.position.id,
             id: rec.id,
-            schedule: rec.schedule,
+            first_name: rec.first_name,
+            last_name: rec.last_name,
+            phone: rec.phone,
+            branch_id: rec.branch.id,
+            position_id: rec.position.id,
+            schedule_id: rec.schedule.id,
+            organization_id: rec.organization_id,
         });
         setIsUpdatingEmployee(true);
     };
@@ -49,7 +43,7 @@ const AdminEmployeePageTable = () => {
     const columns: TableProps<IEmployee>['columns'] = [
         {
             title: 'Имя',
-            dataIndex: 'name',
+            dataIndex: 'full_name',
             className: `${columnResponseText}`,
         },
         {
@@ -86,15 +80,13 @@ const AdminEmployeePageTable = () => {
             title: '',
             dataIndex: 'actions',
             render: (_, rec) => (
-                <div className="flex flex-col gap-1 lg:gap-2 xl:gap-5">
+                <div className="flex gap-1 lg:gap-2">
                     <Button
                         type="primary"
                         onClick={() => navigate(`/employees/${rec.id}`)}
                         icon={<FaEye />}
                         className="text-[12px] md:text-[14px]"
-                    >
-                        <div className="hidden xl:block">Смотреть</div>
-                    </Button>
+                    />
                     <DeleteButton onConfirm={() => deleteBranch(rec.id)} />
                     <EditButton onClick={() => handleEdit(rec)} />
                 </div>
@@ -116,17 +108,17 @@ const AdminEmployeePageTable = () => {
             bordered
             columns={columns}
             rowKey={(el) => el.id}
-            dataSource={data?.data}
-            pagination={{
-                showSizeChanger: true,
-                current: employeeTablePage,
-                pageSize: employeeTableLimit,
-                total: data?.total,
-                onChange: (page, limit) => {
-                    setEmployeeTablePage(page);
-                    setEmployeeTableLimit(limit);
-                },
-            }}
+            dataSource={data}
+            // pagination={{
+            //     showSizeChanger: true,
+            //     current: employeeTablePage,
+            //     pageSize: employeeTableLimit,
+            //     total: data?.total,
+            //     onChange: (page, limit) => {
+            //         setEmployeeTablePage(page);
+            //         setEmployeeTableLimit(limit);
+            //     },
+            // }}
             className="mt-2"
         />
     );

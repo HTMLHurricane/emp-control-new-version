@@ -1,15 +1,21 @@
+import { useGetOrganizationQuery } from '@/entities/organization/api';
 import { useCreateRoleMutation } from '@/entities/role/api';
 import { IRolePost } from '@/entities/role/model/types';
 import { FlexBox, useAppActions } from '@/shared';
-import { Button, Form, Input, message } from 'antd';
-import { useEffect } from 'react';
+import { mapToOptions } from '@/shared/lib/mapToOptions';
+import { Button, Form, Input, message, Select } from 'antd';
+import { useEffect, useMemo } from 'react';
 
 const AdminCreateRoleForm = () => {
     const [form] = Form.useForm();
     const [createRole, { isSuccess, isLoading, isError }] =
         useCreateRoleMutation();
     const { setIsCreatingRole } = useAppActions();
-
+    const { data: organizations } = useGetOrganizationQuery();
+    const organizationOptions = useMemo(
+        () => mapToOptions(organizations),
+        [organizations],
+    );
     const onSubmit = (data: IRolePost) => {
         createRole(data);
     };
@@ -45,11 +51,6 @@ const AdminCreateRoleForm = () => {
             layout="vertical"
         >
             <Form.Item<IRolePost>
-                name="organization_id"
-                className="hidden"
-                initialValue={43}
-            />
-            <Form.Item<IRolePost>
                 name="name"
                 label="Название роли"
                 rules={[
@@ -57,6 +58,18 @@ const AdminCreateRoleForm = () => {
                 ]}
             >
                 <Input />
+            </Form.Item>
+            <Form.Item<IRolePost>
+                name="organization_id"
+                label="Организация"
+                rules={[
+                    { required: true, message: 'Пожалуйста, заполните поле!' },
+                ]}
+            >
+                <Select
+                    disabled={!organizationOptions?.length}
+                    options={organizationOptions}
+                />
             </Form.Item>
             <FlexBox>
                 <Button onClick={onCancel} type="default">

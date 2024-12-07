@@ -2,7 +2,7 @@ import { api } from '@/shared';
 import { IdName, IResponse } from '@/shared/types/Types';
 import { IRolePost } from '../model/types';
 
-export const RoleAPI = api.injectEndpoints({
+export const roleApi = api.injectEndpoints({
     endpoints: (builder) => ({
         getAllRoles: builder.query<IdName[], void>({
             query: () => ({
@@ -41,4 +41,4 @@ export const {
     useCreateRoleMutation,
     useDeleteRoleMutation,
     useUpdateRoleMutation,
-} = RoleAPI;
+} = roleApi;

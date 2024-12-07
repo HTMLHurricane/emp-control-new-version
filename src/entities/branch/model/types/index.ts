@@ -15,5 +15,5 @@ export interface IBranchSliceState {
     isCreatingBranch: boolean;
     isUpdatingBranch: boolean;
     branchForm: IBranchPatch | null;
-    branchDate: string
+    branchDate: string;
 }

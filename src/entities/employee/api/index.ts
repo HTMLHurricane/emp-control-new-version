@@ -28,12 +28,13 @@ export const EmployeeAPI = api.injectEndpoints({
             invalidatesTags: ['employee'],
         }),
         setEmployeeImage: builder.mutation<IEmployeeImage, IEmployeeImagePost>({
-            query: ({ id, image }) => {
+            query: ({ id, file }) => {
                 const formData = new FormData();
-                formData.append('image', image);
+                formData.append('file', file);
                 return {
                     url: `employees/add_image?employee_id=${id}`,
                     method: 'POST',
+                    body: formData,
                 };
             },
             invalidatesTags: ['employee'],

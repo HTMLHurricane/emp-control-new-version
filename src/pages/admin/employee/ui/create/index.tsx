@@ -1,23 +1,31 @@
 import { useGetAllBranchesQuery } from '@/entities/branch/api';
-import { useCreateEmployeeMutation } from '@/entities/employee/api';
+import {
+    useCreateEmployeeMutation,
+    useSetEmployeeImageMutation,
+} from '@/entities/employee/api';
 import { IEmployeePost } from '@/entities/employee/model/types';
 import { useGetOrganizationQuery } from '@/entities/organization/api';
 import { useGetAllRolesQuery } from '@/entities/role/api';
 import { useGetAllSchedulesQuery } from '@/entities/schedule/api';
 import { FlexBox, useAppActions } from '@/shared';
 import { mapToOptions } from '@/shared/lib/mapToOptions';
-import { Button, Form, Input, Select, message } from 'antd';
-import { useEffect, useMemo } from 'react';
+import { Button, Form, Input, Select, Upload, message } from 'antd';
+import { useEffect, useMemo, useState } from 'react';
+import { UploadOutlined } from '@ant-design/icons';
 
 const AdminCreateEmployeeForm = () => {
     const [form] = Form.useForm();
-    const [createEmployee, { isSuccess, isLoading, isError }] =
+    const [createEmployee, { isSuccess, isError }] =
         useCreateEmployeeMutation();
     const { data: roles } = useGetAllRolesQuery();
     const { data: branches } = useGetAllBranchesQuery();
     const { data: schedules } = useGetAllSchedulesQuery();
     const { data: organizations } = useGetOrganizationQuery();
     const { setIsCreatingEmployee } = useAppActions();
+    const [
+        setImage,
+        { isLoading: loading, isSuccess: success, isError: error },
+    ] = useSetEmployeeImageMutation();
 
     const roleOptions = useMemo(() => mapToOptions(roles), [roles]);
     const branchOptions = useMemo(() => mapToOptions(branches), [branches]);
@@ -27,23 +35,40 @@ const AdminCreateEmployeeForm = () => {
         [organizations],
     );
 
-    const onSubmit = (data: IEmployeePost) => {
-        createEmployee(data);
+    const [imageFile, setImageFile] = useState<File | null>(null);
+
+    const handleUploadChange = (info: any) => {
+        if (info.fileList.length > 0) {
+            const selectedFile = info.fileList[0].originFileObj;
+            setImageFile(selectedFile);
+        }
     };
+
+    const onSubmit = async (data: IEmployeePost) => {
+        const employeeResponse = await createEmployee(data).unwrap();
+        if (imageFile) {
+            await setImage({
+                id: employeeResponse.data.id,
+                file: imageFile,
+            });
+        }
+    };
+
+    useEffect(() => {
+        if (isSuccess && success) {
+            message.success('Сотрудник успешно создан!');
+            setIsCreatingEmployee(false);
+        } else if (loading) {
+            message.loading('Создаем сотрудника...');
+        } else if (isError || error) {
+            message.error('Произошла ошибка при создании сотрудника.');
+        }
+    }, [isSuccess, isError, success, loading, error]);
 
     const onCancel = () => {
         setIsCreatingEmployee(false);
         form.resetFields();
     };
-
-    useEffect(() => {
-        if (isSuccess) {
-            message.success('Сотрудник успешно создан');
-            setIsCreatingEmployee(false);
-        } else if (isError) {
-            message.error('Произошла ошибка во время создания сотрудника');
-        }
-    }, [isSuccess, isError]);
 
     useEffect(() => () => onCancel(), []);
 
@@ -55,6 +80,26 @@ const AdminCreateEmployeeForm = () => {
             onFinish={onSubmit}
             layout="vertical"
         >
+            <Form.Item
+                label="Выберите изображение"
+                rules={[
+                    {
+                        required: true,
+                        message: 'Пожалуйста, выберите изображение!',
+                    },
+                ]}
+            >
+                <Upload
+                    beforeUpload={() => false}
+                    maxCount={1}
+                    accept="image/*"
+                    onChange={handleUploadChange}
+                >
+                    <Button icon={<UploadOutlined />}>
+                        Выбрать изображение
+                    </Button>
+                </Upload>
+            </Form.Item>
             <Form.Item<IEmployeePost>
                 name="first_name"
                 label="Имя"
@@ -131,7 +176,7 @@ const AdminCreateEmployeeForm = () => {
                 <Button onClick={onCancel} type="default">
                     Отмена
                 </Button>
-                <Button loading={isLoading} type="primary" htmlType="submit">
+                <Button loading={loading} type="primary" htmlType="submit">
                     Сохранить
                 </Button>
             </FlexBox>

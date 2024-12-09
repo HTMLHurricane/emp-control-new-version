@@ -46,7 +46,7 @@ export interface IEmployeeImage {
 
 export interface IEmployeeImagePost {
     id: number;
-    image: File;
+    file: File;
 }
 
 export interface IEmployeeSliceState {
